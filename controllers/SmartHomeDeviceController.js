@@ -38,4 +38,29 @@ const registerSmartDevice = async (req, res) => {
   }
 };
 
-module.exports = { getUserDevices, registerSmartDevice };
+// Update device telemetry
+const updateDeviceTelemetry = async (req, res) => {
+    try {
+      const { deviceId, telemetry } = req.body;
+  
+      if (!deviceId || !telemetry) {
+        return res.status(400).json({ message: 'Device ID and telemetry data are required' });
+      }
+  
+      const device = await SmartHomeDevice.findOneAndUpdate(
+        { deviceId },
+        { telemetry, lastActive: new Date(), status: 'online' },
+        { new: true }
+      );
+  
+      if (!device) {
+        return res.status(404).json({ message: 'Device not found' });
+      }
+  
+      res.status(200).json({ message: 'Telemetry updated', device });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error', error });
+    }
+  };
+  
+  module.exports = { getUserDevices, registerSmartDevice, updateDeviceTelemetry };

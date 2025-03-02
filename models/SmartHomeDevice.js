@@ -6,7 +6,10 @@ const SmartHomeDeviceSchema = new mongoose.Schema({
   deviceName: { type: String, required: true },
   deviceType: { type: String, required: true },
   location: { type: String },
-  registeredAt: { type: Date, default: Date.now }
+  registeredAt: { type: Date, default: Date.now },
+  lastActive: { type: Date, default: null },
+  status: { type: String, enum: ['online', 'offline'], default: 'offline' },
+  telemetry: { type: mongoose.Schema.Types.Mixed } // Flexible for any telemetry data
 });
 
 module.exports = mongoose.model('SmartHomeDevice', SmartHomeDeviceSchema);
