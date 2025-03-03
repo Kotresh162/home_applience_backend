@@ -1,7 +1,7 @@
 const WebSocket = require('ws');
-const EnergyConsumption = require('./models/EnergyConsumption');
+const EnergyConsumption = require('./models/energyConsumtion');
 
-const wss = new WebSocket.Server({ port: 8081 });
+const wss = new WebSocket.Server({ port: 3000 });
 
 wss.on('connection', (ws) => {
   console.log('Client connected to WebSocket');
