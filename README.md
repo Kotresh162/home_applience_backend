@@ -22,6 +22,11 @@ The API can be used to manage smart home devices and energy consumption. Below a
 
 ## API DATAs format
 
+![Image 1](./image-1.png)
+![Image 2](./image-2.png)
+![Image](./image.png)
+
+
 ## API Endpoints
 
 ### Authentication
