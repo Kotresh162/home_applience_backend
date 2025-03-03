@@ -13,10 +13,12 @@ const protect = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('🟢 Decoded Token:', decoded);
+    console.log('🔍 Decoded JWT:', decoded);
+    console.log('🔍 Searching for user with ID:', decoded.id);
+
 
     const user = await User.findById(decoded.id).select('-password');
-    console.log('🟢 User found:', user);
+    console.log('🟢 User found:', User);
 
 
     if (!user) {
@@ -27,6 +29,7 @@ const protect = async (req, res, next) => {
     }
 
     req.user = user;
+    console.log('🔍 Middleware User:', req.user);
     next();
   } catch (error) {
     console.error('🔥 Invalid token error:', error.message);

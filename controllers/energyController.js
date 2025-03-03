@@ -1,34 +1,37 @@
 const EnergyConsumption = require('../models/energyConsumtion');
 const EnergyBudget = require('../models/EnergyBudget');
 
-// Store energy consumption data
+
 const logEnergyConsumption = async (req, res) => {
   try {
-    const { deviceId, deviceName, energyUsed } = req.body;
-    const userId = req.user._id; // Get userId from the authenticated user
+    const { userId, deviceId, deviceName, energyUsed, timestamp } = req.body;
 
-    if (!deviceId || !energyUsed) {
-      return res.status(400).json({ message: 'Missing required fields' });
+    // Validate required fields
+    if (!userId || !deviceId || !deviceName || !energyUsed) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const energyRecord = new EnergyConsumption({ userId, deviceId, deviceName, energyUsed });
-    
-    try {
-        await energyRecord.save();
-        res.status(201).json({ message: 'Energy data logged successfully', energyRecord });
-    } catch (error) {
-        console.error('🔥 Error saving energy record:', error.message);
-        return res.status(500).json({ message: 'Error saving energy record', error });
-    }
+    // Create a new energy consumption log
+    const newLog = new EnergyConsumption({
+      userId,
+      deviceId,
+      deviceName,
+      energyUsed,
+      timestamp: timestamp || new Date() // Default to current time if not provided
+    });
 
+    // Save to MongoDB
+    await newLog.save();
+
+    res.status(201).json({ message: 'Energy consumption recorded successfully', data: newLog });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
 const getEnergyData = async (req, res) => {
   try {
-    const userId = req.user._id; // Get userId from authenticated user
+    const { userId, deviceId, deviceName, energyUsed, timestamp } = req.body;
 
     const energyData = await EnergyConsumption.find({ userId }).sort({ timestamp: -1 });
 
@@ -45,7 +48,7 @@ const getEnergyData = async (req, res) => {
 // Set energy usage budget
 const setEnergyBudget = async (req, res) => {
   try {
-    const userId = req.user._id; // Get userId from authenticated user
+    const { userId, deviceId, deviceName, energyUsed, timestamp } = req.body;
     const { monthlyLimit } = req.body;
 
     if (!monthlyLimit) {
